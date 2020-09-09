@@ -8,14 +8,25 @@ import javax.swing.JOptionPane;
 import rmi_otes11.com.servidor.Message;
 
 public class MessageClient {
+
+	private static Message mensagem;
+	private static String dados;
+
 	public static void main(String[] args) {
 		try {
-			Message m = (Message) Naming.lookup("//127.0.0.1:1099/MessageService");
-			System.out.println("Mensagem : " + m);
+
+			mensagem = (Message) Naming.lookup("//localhost:1100/MessageService");
+			dados = JOptionPane.showInputDialog(null, "Digite a mensagem", "Entrada de Dados", JOptionPane.QUESTION_MESSAGE);
+
+			System.out.println(mensagem.imprimir(dados));
+			System.out.println("Mensagem : " + mensagem);
+
 		} catch (RemoteException re) {
+			System.out.println("Erro Remoto: " + re.toString());
 			JOptionPane.showMessageDialog(null, "Erro Remoto: " + re.toString(), "Erro Remoto",
 					JOptionPane.WARNING_MESSAGE);
 		} catch (Exception e) {
+			System.out.println("Erro Local: " + e.toString());
 			JOptionPane.showMessageDialog(null, "Erro Local: " + e.toString(), "Erro Local",
 					JOptionPane.WARNING_MESSAGE);
 		}
