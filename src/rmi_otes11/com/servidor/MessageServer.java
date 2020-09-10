@@ -10,7 +10,6 @@ public class MessageServer {
 	public static int port = 1100;
 	public Message stub;
 	public Registry registry;
-//	registry.toString()
 	
 	MessageServer() {
 		try {

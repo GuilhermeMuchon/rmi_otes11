@@ -9,25 +9,32 @@ import rmi_otes11.com.servidor.Message;
 
 public class MessageClient {
 
-	private static Message mensagem;
-	private static String dados;
+	private static Message objetoRemoto;
+	private static String mensagem;
 
 	public static void main(String[] args) {
 		try {
 
 			boolean end = true;
 			while (end) {
-				mensagem = (Message) Naming.lookup("//localhost:1100/MessageService");
-				dados = JOptionPane.showInputDialog(null, "Digite a mensagem ('Q' para sair)", "Entrada de Dados", JOptionPane.QUESTION_MESSAGE);
+				objetoRemoto = (Message) Naming.lookup("//localhost:1100/MessageService");
+				mensagem = JOptionPane.showInputDialog(null, "Digite a mensagem ('Q' para sair | 'S' para mostrar mensagens)", "Entrada de Dados", JOptionPane.QUESTION_MESSAGE);
 				
-
-				if (dados.equals("Q")) {
+				if (mensagem == null || mensagem.equals("Q")) {
 					end = false;
 					break;
+				} else {
+					switch (mensagem) {
+					case "S":
+						System.out.println(objetoRemoto.mostraListaDeMsg());
+						break;
+					default:
+						System.out.println(objetoRemoto.imprimir(mensagem));
+						System.out.println("Mensagem : " + objetoRemoto);
+						objetoRemoto.adicionaMsg(mensagem);
+						break;
+					}
 				}
-				
-				System.out.println(mensagem.imprimir(dados));
-				System.out.println("Mensagem : " + mensagem);
 			}
 
 		} catch (RemoteException re) {

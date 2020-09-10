@@ -20,10 +20,8 @@ public class MessageImple extends UnicastRemoteObject implements Message {
 	}
 
 	@Override
-	public void mostraListaDeMsg() throws RemoteException {
-		listaDeMsg.forEach(mensagem -> {
-			System.out.println(mensagem);
-		});
+	public List<String> mostraListaDeMsg() throws RemoteException {
+		return listaDeMsg;
 	}
 
 	@Override
