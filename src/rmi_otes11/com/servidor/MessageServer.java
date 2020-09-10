@@ -1,13 +1,13 @@
 package rmi_otes11.com.servidor;
 
-import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
+import java.rmi.server.ExportException;
 
 public class MessageServer {
-	
+
+	public static int port = 1100;
 	public Message stub;
 	public Registry registry;
 //	registry.toString()
@@ -16,13 +16,14 @@ public class MessageServer {
 		try {
 			
 			Message objetoServidor = new MessageImple();
-//			stub = (Message) UnicastRemoteObject.exportObject(objetoServidor, 0);
-		    registry = LocateRegistry.createRegistry(1100);
+		    registry = LocateRegistry.createRegistry(MessageServer.port);
 	        registry.rebind("MessageService", objetoServidor);
 	        
-//			System.setProperty("java.rmi.server.hostname", "127.0.0.1");
-//			Naming.rebind("rmi://127.0.0.1:1099/MessageService", c);
 			System.out.println("MessageService esta ativo!");
+		} catch (ExportException ee) {
+			MessageServer.port++;
+			System.out.println(MessageServer.port);
+			new MessageServer();
 		} catch (RemoteException re) {
 			System.out.println("Erro Remoto: " + re.toString());
 		} catch (Exception e) {

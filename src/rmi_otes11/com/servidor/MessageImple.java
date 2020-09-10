@@ -5,8 +5,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 public class MessageImple extends UnicastRemoteObject implements Message {
 
 	private static final long serialVersionUID = 7308250285961892175L;
@@ -18,7 +16,6 @@ public class MessageImple extends UnicastRemoteObject implements Message {
 
 	@Override
 	public String imprimir(String mensagem) throws RemoteException {
-		JOptionPane.showMessageDialog(null, mensagem, "Mensagem do Objeto Cliente", JOptionPane.INFORMATION_MESSAGE);
 		return "S1:" + mensagem;
 	}
 

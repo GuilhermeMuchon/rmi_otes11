@@ -15,11 +15,20 @@ public class MessageClient {
 	public static void main(String[] args) {
 		try {
 
-			mensagem = (Message) Naming.lookup("//localhost:1100/MessageService");
-			dados = JOptionPane.showInputDialog(null, "Digite a mensagem", "Entrada de Dados", JOptionPane.QUESTION_MESSAGE);
+			boolean end = true;
+			while (end) {
+				mensagem = (Message) Naming.lookup("//localhost:1100/MessageService");
+				dados = JOptionPane.showInputDialog(null, "Digite a mensagem ('Q' para sair)", "Entrada de Dados", JOptionPane.QUESTION_MESSAGE);
+				
 
-			System.out.println(mensagem.imprimir(dados));
-			System.out.println("Mensagem : " + mensagem);
+				if (dados.equals("Q")) {
+					end = false;
+					break;
+				}
+				
+				System.out.println(mensagem.imprimir(dados));
+				System.out.println("Mensagem : " + mensagem);
+			}
 
 		} catch (RemoteException re) {
 			System.out.println("Erro Remoto: " + re.toString());
