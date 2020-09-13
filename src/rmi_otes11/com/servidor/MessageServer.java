@@ -16,12 +16,11 @@ public class MessageServer {
 			
 			Message objetoServidor = new MessageImple();
 		    registry = LocateRegistry.createRegistry(MessageServer.port);
-	        registry.rebind("MessageService", objetoServidor);
+	        registry.rebind("Server" + MessageServer.port, objetoServidor);
 	        
-			System.out.println("MessageService esta ativo!");
+			System.out.println("MessageService " + MessageServer.port + " esta ativo!");
 		} catch (ExportException ee) {
 			MessageServer.port++;
-			System.out.println(MessageServer.port);
 			new MessageServer();
 		} catch (RemoteException re) {
 			System.out.println("Erro Remoto: " + re.toString());

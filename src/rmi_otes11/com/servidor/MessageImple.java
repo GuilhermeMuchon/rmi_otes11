@@ -21,7 +21,7 @@ public class MessageImple extends UnicastRemoteObject implements Message {
 
 	@Override
 	public List<String> mostraListaDeMsg() throws RemoteException {
-		return listaDeMsg;
+			return listaDeMsg;
 	}
 
 	@Override
