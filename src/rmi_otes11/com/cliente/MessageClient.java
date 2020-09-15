@@ -1,56 +1,68 @@
-package rmi_otes11.com.cliente;
+package com.cliente;
 
-import java.rmi.ConnectException;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import rmi_otes11.com.servidor.Message;
+import com.service.MasterService;
+import com.service.MessageService;
+import com.service.MessageServiceModel;
 
 public class MessageClient {
 
-	private static Message objetoRemoto;
-	private static String mensagem;
-	private static int port = 1099;
+	private static MessageService stubServer;
 
+	// Responsável por encontrar o servidor ativo
+	public static MessageServiceModel getAvailableServer() {
+		try {
+			Registry registryMasterServer = LocateRegistry.getRegistry("127.0.0.1", 1200);
+			MasterService stubMasterServer = (MasterService) registryMasterServer.lookup("MasterServer");
+			
+			for (MessageServiceModel sm : stubMasterServer.getServers()) {
+				System.out.println(sm);
+				try {
+					Registry registryServer = LocateRegistry.getRegistry(sm.getHost(), sm.getPort());
+					stubServer = (MessageService) registryServer.lookup(sm.getServerName());
+					return sm;
+				} catch (Exception e) {
+					System.out.println(sm + " não está disponível!");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+    }
+	
 	public static void main(String[] args) {
 		try {
 
 			boolean end = true;
 			while (end) {
-				try {
-					Registry reg = LocateRegistry.getRegistry("localhost", MessageClient.port);
-					Message objetoRemoto = (Message) reg.lookup("Server" + MessageClient.port);
+				String mensagem = JOptionPane.showInputDialog(null, "Digite a mensagem ('Q' para sair | 'S' para mostrar mensagens)", "Entrada de Dados", JOptionPane.QUESTION_MESSAGE);
+				
+				if (mensagem == null || mensagem.equals("Q")) {
+					end = false;
+					break;
+				} else {
 					
-//					objetoRemoto = (Message) Naming.lookup("//localhost:" + port + "/MessageService");
+					getAvailableServer();
 					
-					System.out.println("Conectado na porta: " + MessageClient.port);
-					
-					mensagem = JOptionPane.showInputDialog(null, "Digite a mensagem ('Q' para sair | 'S' para mostrar mensagens)", "Entrada de Dados", JOptionPane.QUESTION_MESSAGE);
-					
-					
-					if (mensagem == null || mensagem.equals("Q")) {
-						end = false;
-						break;
-					} else {
-						switch (mensagem) {
-							case "S":
-								System.out.println(objetoRemoto.mostraListaDeMsg());
-								break;
-							default:
-								System.out.println(objetoRemoto.imprimir(mensagem));
-								System.out.println("Mensagem: " + objetoRemoto);
-								objetoRemoto.adicionaMsg(mensagem);
-								break;
-						}
+					switch (mensagem) {
+						case "S":
+							List<String> retornoList = stubServer.getListOfMsg("cliente1");
+							System.out.println(retornoList);
+							break;
+						default:
+							String retornoEcho = stubServer.echo("cliente1", mensagem);
+							System.out.println(retornoEcho);
+							break;
 					}
-				} catch (NotBoundException|ConnectException ce) {
-					System.out.println("Porta " + MessageClient.port + " não está ativa!");
-	                MessageClient.port++;
-	            }	
+				}
 			}
 
 		} catch (RemoteException re) {
